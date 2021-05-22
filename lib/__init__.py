@@ -55,10 +55,10 @@ class TetrisGame(charpy.Game):
             pass
 
         if key_character == 'w':
-            self.shape.matrix = self.shape.matrix.rotated(clockwize=True)
+            self.shape.rotate(clockwize=True)
             return
         if key_character == 'e':
-            self.shape.matrix = self.shape.matrix.rotated(clockwize=False)
+            self.shape.rotate(clockwize=False)
             return
 
         if key_character == 'a':
@@ -93,53 +93,11 @@ class TetrisGame(charpy.Game):
 
 
     def draw(self):
-        if self.grid:
-            self.draw_grid()
+        self.screen.draw_matrix(self.grid.matrix, self.grid.position)
+        self.screen.draw_matrix(self.shape.char_matrix, self.shape.position)
         self.draw_instructions()
-        if self.shape:
-            self.draw_shape()
         self.draw_info()
         super().draw()
-
-
-
-    def draw_grid(self):
-        pos = self.grid.position
-        matrix = self.grid.matrix
-        for i in range(0, len(matrix)):
-            row = matrix[i]
-            for j in range(0, len(row)):
-                char = row[j]
-                x = j + pos.x
-                y = i + pos.y
-                try:
-                    self.screen.set(y=y, x=x, value=char)
-                except IndexError:
-                    print("Your terminal window is too small\nPlease resize the window and restart the game")
-                    self.end_game()
-
-
-    def draw_shape(self):
-        # Note: Shape positions are NOT relative to the grid position
-        matrix = self.shape.matrix
-        offset = Vector2(
-            x=self.shape.position.x,
-            y=self.shape.position.y
-        )
-        for i in range(0, len(matrix)):
-            row = matrix[i]
-            for j in range(0, len(row)):
-                should_draw = row[j]
-                if should_draw:
-                    x = j + offset.x
-                    y = i + offset.y
-                    self.screen.set(y=y, x=x, value=self.shape.char)
-                # This is for testing purposes, it prints over the empty matrix
-                # spots too
-                # else:
-                #     x = j + offset.x
-                #     y = i + offset.y
-                #     self.screen[y][x] = ' '
 
 
     def draw_instructions(self):
