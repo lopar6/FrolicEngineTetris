@@ -13,9 +13,9 @@ class Grid(GameObject):
     # ╚═══╝
 
     def __init__(self):
+        super().__init__()
         self.empty_char = '.' # '°'
         self.position = Vector2(x=5, y=0)
         matrix = Matrix.empty_sized(rows=16, columns=13, value='.')
         border = MatrixBorder(sides=MatrixBorder.SINGLE_LINE_THIN)
-        matrix = border.apply(matrix)
-        super().__init__(matrix=matrix)
+        self.matrix = matrix.with_border(border)
