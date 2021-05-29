@@ -13,6 +13,7 @@ class LaidShapes(GameObject):
     '''
 
     def __init__(self, grid: Grid, height, width):
+        # making this grid the exact same size as the main grid makes it easier to work with
         self.position = grid.position
         # border offset
         # self.position.x -= 1
@@ -49,6 +50,29 @@ class LaidShapes(GameObject):
     def check_for_collision(self, shape: Shape) -> bool:
         for i in range(len(shape.matrix)):
             for j in range(len(shape.matrix[i])):
-                if shape.matrix[i][j] and self.matrix[shape.position.y + i][shape.position.x + j -2]:
+                if shape.matrix[i][j] and self.matrix[shape.position.y + i][shape.position.x + j - 2]:
                     return True
         return False
+
+    # it may be nice to add some sort of animation here
+    def clear_lines(self) -> int:
+        # find and clear lines
+        cleared_lines = []
+        for i in range(1, len(self.matrix)):
+            if not 0 in self.matrix[i][1:-2]:
+                cleared_lines.append(i)
+                self.matrix[i] = [0 for i in self.matrix[i]]
+
+        # lower uncleared lines
+        cleared_below = 0
+        if len(cleared_lines) > 0:
+            for i in range(len(self.matrix) - 1, 1, -1):
+                for cleared_line in cleared_lines:
+                    if cleared_line > i:
+                        cleared_below += 1
+                        cleared_lines.pop(0)
+                if cleared_below:
+                    self.matrix[i + cleared_below] = self.matrix[i].copy()
+                    self.matrix[i] = [0 for val in self.matrix[i]]
+
+        return len(cleared_lines)

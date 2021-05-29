@@ -135,6 +135,12 @@ class TetrisGame(charpy.Game):
         if self.time_since_shape_lowered > lower_rate:
             self.time_since_shape_lowered = 0
             self.lower_shape()
+            # todo move this out for efficieny
+            # it only needs to check when a new shape is placed
+            self.laid_shapes.clear_lines()
+
+
+
 
 
     def draw(self):
