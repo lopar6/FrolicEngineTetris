@@ -94,9 +94,6 @@ class TetrisGame(charpy.Game):
                 self.shape.has_collided = True
         else:
             self.shape.has_collided = True
-        if self.shape.has_collided:
-            self.laid_shapes.add_shape(self.shape, self.grid)
-            self.shape = self.get_next_shape()
 
 
     def move_shape(self, direction: str):
@@ -110,12 +107,12 @@ class TetrisGame(charpy.Game):
         gheight = self.grid.size.y
         if direction == 'left':
             spos.x -= 1
-            if spos.x < gpos.x + 1:
-                spos.x = gpos.x + 1
+            if spos.x < gpos.x + 1 or self.laid_shapes.check_for_collision(self.shape):
+                spos.x += 1
         if direction == 'right':
             spos.x += 1
-            if spos.x > gpos.x + gwidth - swidth - 1:
-                spos.x = gpos.x + gwidth - swidth - 1
+            if spos.x > gpos.x + gwidth - swidth - 1 or self.laid_shapes.check_for_collision(self.shape):
+                spos.x -= 1
         if direction == 'down':   
             if spos.y > gpos.y + gheight - sheight - 2 :
                 pass
@@ -133,10 +130,10 @@ class TetrisGame(charpy.Game):
         if self.time_since_shape_lowered > lower_rate:
             self.time_since_shape_lowered = 0
             self.lower_shape()
-            # todo move this out for efficieny
-            # it only needs to check when a new shape is placed
-            self.laid_shapes.clear_lines()
-
+            if self.shape.has_collided:
+                self.laid_shapes.add_shape(self.shape, self.grid)
+                self.shape = self.get_next_shape()
+                self.laid_shapes.clear_lines()
 
 
 
