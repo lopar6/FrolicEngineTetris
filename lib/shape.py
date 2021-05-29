@@ -6,6 +6,7 @@ from charpy.matrix import Matrix
 
 class Shape(GameObject):
     char = '▣'
+    has_collided = False
 
     def __str__(self):
         return 'Shape'
@@ -102,3 +103,5 @@ class TShape(Shape):
 
     def __str__(self):
         return 'TShape'
+
+# todo add spin collision check

@@ -28,6 +28,7 @@ class LaidShapes(GameObject):
         for i in range(len(shape.matrix)):
             for j in range(len(shape.matrix[i])):
                 if shape.matrix[i][j]:
+                    # not sure why, but x axis is 2 off!
                     self.matrix[shape.position.y + i][shape.position.x + j -2] = 1
 
 
@@ -44,3 +45,10 @@ class LaidShapes(GameObject):
                     x = j + offset.x
                     y = i + offset.y
                     screen.set(y=y, x=x, value=self.char)
+
+    def check_for_collision(self, shape: Shape) -> bool:
+        for i in range(len(shape.matrix)):
+            for j in range(len(shape.matrix[i])):
+                if shape.matrix[i][j] and self.matrix[shape.position.y + i][shape.position.x + j -2]:
+                    return True
+        return False
