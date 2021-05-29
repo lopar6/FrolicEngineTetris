@@ -118,8 +118,6 @@ class TetrisGame(charpy.Game):
                 spos.x = gpos.x + gwidth - swidth - 1
         if direction == 'down':   
             if spos.y > gpos.y + gheight - sheight - 2 :
-                # currently causes bug where grid moves down if shape is out of bounds
-                # gpos.y = gpos.y + gheight - sheight - 1
                 pass
             else:
                 spos.y += 1
@@ -199,6 +197,7 @@ class TetrisGame(charpy.Game):
         self.screen.set(y=y, x=0, value="Press 'w' arrow to spin shape!")
 
 
+    # todo remove a lot of this and add score and next piece
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
         info = []
