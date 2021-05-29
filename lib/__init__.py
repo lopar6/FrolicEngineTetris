@@ -8,12 +8,15 @@ from pynput import keyboard
 
 from lib.grid import Grid
 from lib.shape import *
+from lib.laid_shapes import LaidShapes
 
 class TetrisGame(charpy.Game):
 
     def __init__(self):
+        _grid_height = 16    # used to initalize both grid and laid_shapes
+        _grid_rows = 13
         super().__init__()
-        self.grid = Grid()
+        self.grid = Grid(_grid_height, _grid_rows)
         self.grid.position.x += 2
         self.start_shape_position : Vector2 = None
         self.deltatime : datetime.timedelta = None
@@ -22,10 +25,11 @@ class TetrisGame(charpy.Game):
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
         self.shape : Shape = self.get_next_shape()
+        self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
         self.set_on_keydown(self.on_key_down)
         self.game_loop()
 
-
+    # todo move shape logic to shape class
     def get_next_shape(self) -> Shape:
         shapes = [
             Square,
@@ -77,7 +81,6 @@ class TetrisGame(charpy.Game):
             return
 
 
-
     def lower_shape(self):
         spos = self.shape.position
         gpos = self.grid.position
@@ -85,8 +88,9 @@ class TetrisGame(charpy.Game):
         gheight = self.grid.size.y
         if spos.y < gpos.y + gheight - sheight - 1 :
             spos.y += 1
-
-        
+        else:
+            self.laid_shapes.add_shape(self.shape, self.grid)
+            self.shape = self.get_next_shape()
 
 
     def move_shape(self, direction: str):
@@ -129,6 +133,8 @@ class TetrisGame(charpy.Game):
         if self.grid:
             self.draw_grid()
         self.draw_instructions()
+        if self.laid_shapes:
+            self.laid_shapes.draw_laid_shapes(self.grid, self.screen)
         if self.shape:
             self.draw_shape()
         self.draw_info()
@@ -173,7 +179,6 @@ class TetrisGame(charpy.Game):
                 #     x = j + offset.x
                 #     y = i + offset.y
                 #     self.screen[y][x] = ' '
-
 
     def draw_instructions(self):
         y = self.grid.position.y + self.grid.size.y

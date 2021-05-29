@@ -12,10 +12,9 @@ class Grid(GameObject):
     # ║°°°║
     # ╚═══╝
 
-    def __init__(self):
+    def __init__(self, height, width):
         self.empty_char = '.' # '°'
         self.position = Vector2(x=5, y=0)
-        matrix = Matrix.empty_sized(rows=16, columns=13, value='.')
+        matrix = Matrix.empty_sized(rows=height, columns=width, value='.')
         # matrix = matrix.with_border(MatrixBorder.DOUBLE_LINE)
         super().__init__(matrix=matrix)
-        
