@@ -1,8 +1,11 @@
 import numpy
+
+from charpy.screen import Screen
 from charpy.vector2 import Vector2
 from charpy.game_object import GameObject
 from charpy.matrix import Matrix
 
+from lib.grid import Grid
 
 class Shape(GameObject):
     char = '▣'
@@ -10,6 +13,39 @@ class Shape(GameObject):
 
     def __str__(self):
         return 'Shape'
+
+
+    def draw(self, screen: Screen):
+    # Note: Shape positions are NOT relative to the grid position
+        offset = Vector2(
+            x=self.position.x,
+            y=self.position.y
+        )
+        for i in range(0, len(self.matrix)):
+            row = self.matrix[i]
+            for j in range(0, len(row)):
+                should_draw = row[j]
+                if should_draw:
+                    x = j + offset.x
+                    y = i + offset.y
+                    screen.set(y=y, x=x, value=self.char)
+
+
+    def move(self, direction: str, grid: Grid):
+            # Note: we have to pretend the grid is smaller than it really is to
+            #       take the grid's outer box shape into account
+            spos = self.position
+            gpos = grid.position
+            sheight = self.size.y
+            gheight = grid.size.y
+            if direction == 'left':
+                spos.x -= 1
+            if direction == 'right':
+                spos.x += 1
+            if direction == 'down':   
+                spos.y += 1
+            if direction == 'up':
+                spos.y -= 1
 
 
 class Square(Shape):
