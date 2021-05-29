@@ -83,8 +83,8 @@ class TetrisGame(charpy.Game):
             if spos.x < gpos.x + gsize.x - ssize.x - 1 :
                 self.shape.move('right', self.grid)
 
-            elif self.laid_shapes.check_for_collision(self.shape):
-                self.shape.move('right', self.grid)
+            if self.laid_shapes.check_for_collision(self.shape):
+                self.shape.move('left', self.grid)
             return
 
         if key_character == 's':
