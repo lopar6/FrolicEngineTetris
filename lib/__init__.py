@@ -1,7 +1,9 @@
 import datetime
 import random
+import numpy
 
 import charpy
+from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
 from lib.grid import Grid
@@ -18,6 +20,7 @@ class TetrisGame(charpy.Game):
         self.start_shape_position: Vector2 = self.grid.position.clone()
         self.start_shape_position.x += int(self.grid.size.x/2) - 2
         self.start_shape_position.y += 1
+        self.time_since_shape_lowered = self.time_played = 1
         self.shape : Shape = self.get_next_shape()
         self.set_on_keydown(self.on_key_down)
         self.game_loop()
@@ -69,6 +72,22 @@ class TetrisGame(charpy.Game):
             self.move_shape('right')
             return
 
+        if key_character == 's':
+            self.move_shape('down')
+            return
+
+
+
+    def lower_shape(self):
+        spos = self.shape.position
+        gpos = self.grid.position
+        sheight = self.shape.size.y
+        gheight = self.grid.size.y
+        if spos.y < gpos.y + gheight - sheight - 1 :
+            spos.y += 1
+
+        
+
 
     def move_shape(self, direction: str):
         # Note: we have to pretend the grid is smaller than it really is to
@@ -77,6 +96,8 @@ class TetrisGame(charpy.Game):
         gpos = self.grid.position
         swidth = self.shape.size.x
         gwidth = self.grid.size.x
+        sheight = self.shape.size.y
+        gheight = self.grid.size.y
         if direction == 'left':
             spos.x -= 1
             if spos.x < gpos.x + 1:
@@ -85,11 +106,23 @@ class TetrisGame(charpy.Game):
             spos.x += 1
             if spos.x > gpos.x + gwidth - swidth - 1:
                 spos.x = gpos.x + gwidth - swidth - 1
-
+        if direction == 'down':   # currently causes bug where grid moves down if shape is out of bounds
+            if spos.y > gpos.y + gheight - sheight - 2 :
+                # gpos.y = gpos.y + gheight - sheight - 1
+                pass
+            else:
+                spos.y += 1
 
 
     def update(self, deltatime):
         self.deltatime = deltatime
+        self.time_since_shape_lowered += deltatime.microseconds
+        self.time_played += deltatime.microseconds
+        lower_rate = 750000
+        if self.time_since_shape_lowered > lower_rate:
+            self.time_since_shape_lowered = 0
+            self.lower_shape()
+
 
 
     def draw(self):
@@ -159,5 +192,6 @@ class TetrisGame(charpy.Game):
             fps = str(int(1000000 / self.deltatime.microseconds))
             info.append(f'FPS:            {fps}                    ')
         info.append(f'Chars redrawn:  {charpy.ConsolePrinter.replaced}    ')
+        info.append(f'time: {self.time_played}')
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])

@@ -16,6 +16,6 @@ class Grid(GameObject):
         self.empty_char = '.' # '°'
         self.position = Vector2(x=5, y=0)
         matrix = Matrix.empty_sized(rows=16, columns=13, value='.')
-        border = MatrixBorder(sides=MatrixBorder.SINGLE_LINE_THIN)
-        matrix = border.apply(matrix)
+        # matrix = matrix.with_border(MatrixBorder.DOUBLE_LINE)
         super().__init__(matrix=matrix)
+        
