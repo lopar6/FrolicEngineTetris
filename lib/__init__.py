@@ -3,6 +3,7 @@ import random
 from typing import Tuple
 from charpy import screen
 import numpy
+from time import sleep
 
 import charpy
 from numpy.core.fromnumeric import shape
@@ -48,7 +49,6 @@ class TetrisGame(charpy.Game):
 
 
     def on_key_down(self, key):
-        
         if key == keyboard.Key.esc:
             self.end_game()
             return
@@ -88,7 +88,7 @@ class TetrisGame(charpy.Game):
             return
 
         if key_character == 's':
-            if spos.y < gpos.y + gsize.y - ssize.y - 2 :
+            if spos.y < gpos.y + gsize.y - ssize.y - 1 :
                 self.shape.move('down', self.grid)
                 
             if self.laid_shapes.check_for_collision(self.shape):
@@ -121,6 +121,8 @@ class TetrisGame(charpy.Game):
             self.lower_shape()
             if self.shape.has_collided:
                 self.laid_shapes.add_shape(self.shape, self.grid)
+                if self.laid_shapes.check_for_height_limit_reached():
+                    self.game_over()
                 self.shape = self.get_next_shape()
                 self.laid_shapes.clear_lines()
 
@@ -128,14 +130,12 @@ class TetrisGame(charpy.Game):
     def draw(self):
         if self.grid:
             self.draw_grid()
-        self.draw_instructions()
         if self.laid_shapes:
             self.laid_shapes.draw_laid_shapes(self.grid, self.screen)
         if self.shape:
             self.shape.draw(self.screen)
         self.draw_info()
         super().draw()
-
 
 
     def draw_grid(self):
@@ -154,10 +154,6 @@ class TetrisGame(charpy.Game):
                     self.end_game()
 
 
-    def draw_instructions(self):
-        y = self.grid.position.y + self.grid.size.y
-
-
     #  add score and next piece
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
@@ -168,3 +164,9 @@ class TetrisGame(charpy.Game):
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])
     
+
+    def game_over(self):
+        self.clear_set_empty_screen()
+        print("Thanks for playing!")
+        sleep(5)
+        self.end_game()

@@ -15,8 +15,10 @@ class LaidShapes(GameObject):
     def __init__(self, grid: Grid, height, width):
         # making this grid the exact same size as the main grid makes it easier to work with
         self.position = grid.position
+        # currenly this value only increase, and never goes down when lines clear
+        # highest Piece is actually the lowest value for y
+        self.highest_piece = height
         # border offset
-        # self.position.x -= 1
         self.matrix = Matrix.empty_sized(rows=height, columns=width, value=0)
         self.char = '▢'
 
@@ -31,7 +33,9 @@ class LaidShapes(GameObject):
                 if shape.matrix[i][j]:
                     # not sure why, but x axis is 2 off!
                     self.matrix[shape.position.y + i][shape.position.x + j -2] = 1
-
+                    # update highest piece
+                    if shape.position.y < self.highest_piece:
+                        self.highest_piece = shape.position.y
 
     def draw_laid_shapes(self, grid: Grid, screen: Screen):
         offset = Vector2(
@@ -76,3 +80,8 @@ class LaidShapes(GameObject):
                     self.matrix[i] = [0 for val in self.matrix[i]]
 
         return len(cleared_lines)
+
+    def check_for_height_limit_reached(self):
+        if self.highest_piece < 2:
+            return True
+        return False
