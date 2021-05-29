@@ -1,4 +1,5 @@
 import numpy
+import copy
 from charpy.vector2 import Vector2
 from charpy.game_object import GameObject
 from charpy.screen import Screen
@@ -14,7 +15,7 @@ class LaidShapes(GameObject):
 
     def __init__(self, grid: Grid, height, width):
         # making this grid the exact same size as the main grid makes it easier to work with
-        self.position = grid.position
+        self.position = grid.position.clone()
         # currenly this value only increase, and never goes down when lines clear
         # highest Piece is actually the lowest value for y
         self.highest_piece = height
@@ -32,7 +33,7 @@ class LaidShapes(GameObject):
             for j in range(len(shape.matrix[i])):
                 if shape.matrix[i][j]:
                     # not sure why, but x axis is 2 off!
-                    self.matrix[shape.position.y + i][shape.position.x + j -2] = 1
+                    self.matrix[shape.position.y + i][shape.position.x + j -2] = shape.char
                     # update highest piece
                     if shape.position.y < self.highest_piece:
                         self.highest_piece = shape.position.y
@@ -49,7 +50,7 @@ class LaidShapes(GameObject):
                 if should_draw:
                     x = j + offset.x
                     y = i + offset.y
-                    screen.set(y=y, x=x, value=self.char)
+                    screen.set(y=y, x=x, value=self.matrix[i][j])
 
     def check_for_collision(self, shape: Shape) -> bool:
         for i in range(len(shape.matrix)):

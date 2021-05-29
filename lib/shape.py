@@ -32,8 +32,6 @@ class Shape(GameObject):
 
 
     def move(self, direction: str, grid: Grid):
-            # Note: we have to pretend the grid is smaller than it really is to
-            #       take the grid's outer box shape into account
             spos = self.position
             gpos = grid.position
             sheight = self.size.y
