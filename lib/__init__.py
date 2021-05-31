@@ -4,6 +4,7 @@ from typing import Tuple
 from charpy import screen
 import numpy
 from time import sleep
+import copy
 
 import charpy
 from numpy.core.fromnumeric import shape
@@ -34,13 +35,13 @@ class TetrisGame(charpy.Game):
 
     def get_next_shape(self) -> Shape:
         shapes = [
-            Square,
+            # Square,
             Line,
-            ForwardsL,
-            BackwardsL,
-            ForwardsZ,
-            BackwardsZ,
-            TShape,
+            # ForwardsL,
+            # BackwardsL,
+            # ForwardsZ,
+            # BackwardsZ,
+            # TShape,
         ]
         _ShapeClass = random.choice(shapes)
         shape = _ShapeClass()
@@ -48,6 +49,31 @@ class TetrisGame(charpy.Game):
         return shape
 
 
+    def spin_shape(self):
+        prevous_shape = copy.copy(self.shape)
+        # line edge case
+        if self.shape.__str__() == 'Line':
+            if self.shape.position.x > self.grid.position.x + self.grid.size.x - 3:
+                self.shape.move('left', self.grid)
+            if self.shape.position.x > self.grid.position.x + self.grid.size.x - 4:
+                self.shape.move('left', self.grid)
+
+        self.shape.matrix = self.shape.matrix.rotated(clockwize=True)
+        if self.shape.position.x < self.grid.position.x + 1: 
+            self.shape.move('right', self.grid)
+        elif self.shape.position.x > self.grid.position.x + self.grid.size.x - self.shape.size.x - 1 :
+            self.shape.move('left', self.grid)
+
+            # todo fix you can can spin into ground
+        elif self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
+            self.shape.move('up', self.grid)
+        
+        # Todo add collision detection for spin
+
+        if self.laid_shapes.check_for_collision(self.shape):
+            pass
+    
+    
     def on_key_down(self, key):
         if key == keyboard.Key.esc:
             self.end_game()
@@ -59,11 +85,9 @@ class TetrisGame(charpy.Game):
         except:
             pass
 
+        # getting size and position explicity for updated values after spin
         if key_character == 'w':
-            self.shape.matrix = self.shape.matrix.rotated(clockwize=True)
-            return
-        if key_character == 'e':
-            self.shape.matrix = self.shape.matrix.rotated(clockwize=False)
+            self.spin_shape()
             return
 
         spos = self.shape.position
