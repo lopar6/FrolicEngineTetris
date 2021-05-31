@@ -32,7 +32,8 @@ class TetrisGame(charpy.Game):
         self.shape : Shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
         self.set_on_keydown(self.on_key_down)
-        self.game_loop()
+        self.show_debug_info = True
+        self.start_game()
 
     def get_next_shape(self) -> Shape:
         shapes = [
@@ -138,9 +139,9 @@ class TetrisGame(charpy.Game):
 
     def update(self, deltatime):
         self.deltatime = deltatime
-        self.time_since_shape_lowered += deltatime.microseconds
-        self.time_played += deltatime.microseconds
-        lower_rate = 750000
+        self.time_since_shape_lowered += deltatime
+        self.time_played += deltatime
+        lower_rate = .75
         if self.time_since_shape_lowered > lower_rate:
             self.time_since_shape_lowered = 0
             self.lower_shape()
@@ -183,9 +184,6 @@ class TetrisGame(charpy.Game):
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
         info = []
-        if self.deltatime.microseconds:
-            fps = str(int(1000000 / self.deltatime.microseconds))
-            info.append(f'FPS:            {fps}                    ')
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])
     
