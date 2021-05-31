@@ -1,4 +1,5 @@
 import numpy
+import colorama
 
 from charpy.screen import Screen
 from charpy.vector2 import Vector2
@@ -7,13 +8,15 @@ from charpy.matrix import Matrix
 
 from lib.grid import Grid
 
+BRIGHT = colorama.Style.BRIGHT
+RESET_ALL = colorama.Style.RESET_ALL
 class Shape(GameObject):
     char = '▣'
     has_collided = False
+    color = colorama.Fore.WHITE
 
     def __str__(self):
         return 'Shape'
-
 
     def draw(self, screen: Screen):
     # Note: Shape positions are NOT relative to the grid position
@@ -47,6 +50,10 @@ class Shape(GameObject):
 
 
 class Square(Shape):
+    _char = '▣'
+    color = colorama.Fore.YELLOW
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+
     def __init__(self):
         matrix = Matrix([
             [1, 1],
@@ -54,11 +61,15 @@ class Square(Shape):
         ])
         super().__init__(matrix=matrix)
 
+
     def __str__(self):
         return 'Square'
 
 class Line(Shape):
-    char = '▤'
+    _char = '▣'
+    color = colorama.Fore.CYAN
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+
     def __init__(self):
         matrix = Matrix([
             [1],
@@ -73,7 +84,10 @@ class Line(Shape):
 
 
 class ForwardsL(Shape):
-    char = '▢'
+    _char = '▣'
+    color = colorama.Fore.YELLOW
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+
     def __init__(self):
         matrix = Matrix([
             [1, 0],
@@ -87,7 +101,10 @@ class ForwardsL(Shape):
 
 
 class BackwardsL(Shape):
-    char = '□'
+    _char = '▣'
+    color = colorama.Fore.BLUE
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+
     def __init__(self):
         matrix = Matrix([
             [0, 1],
@@ -101,7 +118,10 @@ class BackwardsL(Shape):
 
 
 class ForwardsZ(Shape):
-    char = '▧'
+    _char = '▣'
+    color = colorama.Fore.RED
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    
     def __init__(self):
         matrix = Matrix([
             [1, 1, 0],
@@ -114,7 +134,10 @@ class ForwardsZ(Shape):
 
 
 class BackwardsZ(Shape):
-    char = '▨'
+    _char = '▣'
+    color = colorama.Fore.GREEN
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    
     def __init__(self):
         matrix = Matrix([
             [0, 1, 1],
@@ -127,7 +150,10 @@ class BackwardsZ(Shape):
 
 
 class TShape(Shape):
-    char = '▦'
+    _char = '▣'
+    color = colorama.Fore.MAGENTA
+    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+
     def __init__(self):
         matrix = Matrix([
             [0, 1, 0],

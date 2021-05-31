@@ -1,12 +1,13 @@
 import datetime
 import random
 from typing import Tuple
-from charpy import screen
 import numpy
 from time import sleep
 import copy
+import colorama
 
 import charpy
+from charpy import screen
 from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
@@ -35,13 +36,13 @@ class TetrisGame(charpy.Game):
 
     def get_next_shape(self) -> Shape:
         shapes = [
-            # Square,
+            Square,
             Line,
-            # ForwardsL,
-            # BackwardsL,
-            # ForwardsZ,
-            # BackwardsZ,
-            # TShape,
+            ForwardsL,
+            BackwardsL,
+            ForwardsZ,
+            BackwardsZ,
+            TShape,
         ]
         _ShapeClass = random.choice(shapes)
         shape = _ShapeClass()

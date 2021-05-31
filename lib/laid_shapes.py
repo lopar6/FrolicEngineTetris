@@ -1,5 +1,7 @@
 import numpy
 import copy
+import colorama
+
 from charpy.vector2 import Vector2
 from charpy.game_object import GameObject
 from charpy.screen import Screen
