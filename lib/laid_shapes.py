@@ -54,12 +54,18 @@ class LaidShapes(GameObject):
                     y = i + offset.y
                     screen.set(y=y, x=x, value=self.matrix[i][j])
 
-    def check_for_collision(self, shape: Shape) -> bool:
+    def check_for_collision(self, shape: Shape, returnCollisionIndex = False) -> bool:
         for i in range(len(shape.matrix)):
             for j in range(len(shape.matrix[i])):
                 if shape.matrix[i][j] and self.matrix[shape.position.y + i][shape.position.x + j - 2]:
+                    if returnCollisionIndex:
+                        return True, i, j
                     return True
+        if returnCollisionIndex:
+            return False, None, None
         return False
+
+
 
     # it may be nice to add some sort of animation here
     def clear_lines(self) -> int:
