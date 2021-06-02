@@ -31,6 +31,13 @@ class TetrisGame(charpy.Game):
         self.time_bewtween_shape_lowerings = 0
         self.set_on_keydown(self.on_key_down)
         self.show_debug_info = True
+        try:
+            _high_score_file = open("high_score.txt", "r")
+            self.high_score = int(_high_score_file.read())
+        except:
+            _high_score_file = open("high_score.txt", "w")
+            self.high_score = 0
+        _high_score_file.close()
         self.run()
 
     def get_next_shape(self) -> Shape:
@@ -220,13 +227,20 @@ class TetrisGame(charpy.Game):
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
         info = []
-        info.append(f'Score: {self.score}')
+        info.append(f'High score: {self.high_score}')
+        info.append(f'Score:      {self.score}')
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])
     
 
     def game_over(self):
         self.clear_set_empty_screen()
+    
+        if self.score > self.high_score:
+            _high_score_file = open("high_score.txt", "w")
+            _high_score_file.write(str(self.score))
+            _high_score_file.close()
+        print("You got the high score!!")
         print("Thanks for playing!")
         sleep(5)
         self.end_game()
