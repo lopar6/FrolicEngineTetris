@@ -28,6 +28,7 @@ class TetrisGame(charpy.Game):
         self.shape : Shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
         self.score = 0
+        self.time_bewtween_shape_lowerings = 0
         self.set_on_keydown(self.on_key_down)
         self.show_debug_info = True
         self.run()
@@ -175,8 +176,9 @@ class TetrisGame(charpy.Game):
         self.deltatime = deltatime
         self.time_since_shape_lowered += deltatime
         self.time_played += deltatime
-        lower_rate = .75
-        if self.time_since_shape_lowered > lower_rate:
+        # as real time increases, the game speeds up 
+        self.time_bewtween_shape_lowerings = ((1 / (self.time_played + 150)) * 100)
+        if self.time_since_shape_lowered > self.time_bewtween_shape_lowerings:
             self.time_since_shape_lowered = 0
             self.lower_shape()
             if self.shape.has_collided:
