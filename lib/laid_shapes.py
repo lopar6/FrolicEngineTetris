@@ -72,7 +72,7 @@ class LaidShapes(GameObject):
         # find and clear lines
         _cleared_lines = []
         for i in range(1, len(self.matrix)):
-            if not 0 in self.matrix[i][1:-2]:
+            if not 0 in self.matrix[i][1:-1]:
                 _cleared_lines.append(i)
                 self.matrix[i] = [0 for i in self.matrix[i]]
 
