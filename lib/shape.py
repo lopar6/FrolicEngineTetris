@@ -157,3 +157,4 @@ class TShape(Shape):
 
     def __str__(self):
         return 'TShape'
+        

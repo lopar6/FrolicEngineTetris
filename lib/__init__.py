@@ -27,19 +27,20 @@ class TetrisGame(charpy.Game):
         self.time_since_shape_lowered = self.time_played = 1
         self.shape : Shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
+        self.score = 0
         self.set_on_keydown(self.on_key_down)
         self.show_debug_info = True
         self.run()
 
     def get_next_shape(self) -> Shape:
         shapes = [
-            Square,
+            # Square,
             Line,
-            ForwardsL,
-            BackwardsL,
-            ForwardsZ,
-            BackwardsZ,
-            TShape,
+            # ForwardsL,
+            # BackwardsL,
+            # ForwardsZ,
+            # BackwardsZ,
+            # TShape,
         ]
         _ShapeClass = random.choice(shapes)
         shape = _ShapeClass()
@@ -103,6 +104,10 @@ class TetrisGame(charpy.Game):
         self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
             self.shape = _prevous_shape
             self.shape.position = _prevous_position
+
+
+    def calculate_score(self, num_lines_cleared: int):
+        self.score += (num_lines_cleared * 100) * num_lines_cleared
 
 
     def on_key_down(self, key):
@@ -178,9 +183,9 @@ class TetrisGame(charpy.Game):
                 self.laid_shapes.add_shape(self.shape, self.grid)
                 if self.laid_shapes.check_for_height_limit_reached():
                     self.game_over()
+                _num_cleared_lines = self.laid_shapes.clear_lines()
+                self.calculate_score(_num_cleared_lines)
                 self.shape = self.get_next_shape()
-                self.laid_shapes.clear_lines()
-
 
     def draw(self):
         if self.grid:
@@ -213,6 +218,7 @@ class TetrisGame(charpy.Game):
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
         info = []
+        info.append(f'Score: {self.score}')
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])
     
