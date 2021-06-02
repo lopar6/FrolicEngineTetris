@@ -50,9 +50,9 @@ class Shape(GameObject):
 
 
 class Square(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.YELLOW
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
 
     def __init__(self):
         matrix = Matrix([
@@ -66,9 +66,9 @@ class Square(Shape):
         return 'Square'
 
 class Line(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.CYAN
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
 
     def __init__(self):
         matrix = Matrix([
@@ -84,9 +84,9 @@ class Line(Shape):
 
 
 class ForwardsL(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.YELLOW
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
 
     def __init__(self):
         matrix = Matrix([
@@ -101,9 +101,9 @@ class ForwardsL(Shape):
 
 
 class BackwardsL(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.BLUE
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
 
     def __init__(self):
         matrix = Matrix([
@@ -118,9 +118,9 @@ class BackwardsL(Shape):
 
 
 class ForwardsZ(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.RED
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
     
     def __init__(self):
         matrix = Matrix([
@@ -134,9 +134,9 @@ class ForwardsZ(Shape):
 
 
 class BackwardsZ(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.GREEN
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
     
     def __init__(self):
         matrix = Matrix([
@@ -150,9 +150,9 @@ class BackwardsZ(Shape):
 
 
 class TShape(Shape):
-    _char = '▣'
+    base_char = '▣'
     color = colorama.Fore.MAGENTA
-    char = f'{color}{BRIGHT}{_char}{RESET_ALL}'
+    char = f'{color}{BRIGHT}{base_char}{RESET_ALL}'
 
     def __init__(self):
         matrix = Matrix([

@@ -1,13 +1,9 @@
 import datetime
 import random
-from typing import Tuple
-import numpy
 from time import sleep
 import copy
-import colorama
 
 import charpy
-from charpy import screen
 from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
@@ -25,7 +21,7 @@ class TetrisGame(charpy.Game):
         self.grid.position.x += 2
         self.start_shape_position : Vector2 = None
         self.deltatime : datetime.timedelta = None
-        self.start_shape_position: Vector2 = self.grid.position.clone()         #todo fix starting position
+        self.start_shape_position: Vector2 = self.grid.position.clone()
         self.start_shape_position.x += int(self.grid.size.x/2) - 1
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
@@ -56,7 +52,6 @@ class TetrisGame(charpy.Game):
         _prevous_shape = copy.copy(self.shape)
         _prevous_position = _prevous_shape.position.clone()
         # line edge case
-        # todo refactor this to move line position for every rotation
         if self.shape.__str__() == 'Line':
             # if vertical
             if self.shape.matrix.size.y > self.shape.matrix.size.x:
