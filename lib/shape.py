@@ -163,5 +163,3 @@ class TShape(Shape):
 
     def __str__(self):
         return 'TShape'
-
-# todo add spin collision check

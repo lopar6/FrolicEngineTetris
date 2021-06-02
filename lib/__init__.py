@@ -26,7 +26,7 @@ class TetrisGame(charpy.Game):
         self.start_shape_position : Vector2 = None
         self.deltatime : datetime.timedelta = None
         self.start_shape_position: Vector2 = self.grid.position.clone()         #todo fix starting position
-        self.start_shape_position.x += int(self.grid.size.x/2) - 2
+        self.start_shape_position.x += int(self.grid.size.x/2) - 1
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
         self.shape : Shape = self.get_next_shape()
@@ -37,13 +37,13 @@ class TetrisGame(charpy.Game):
 
     def get_next_shape(self) -> Shape:
         shapes = [
-            # Square,
+            Square,
             Line,
-            # ForwardsL,
-            # BackwardsL,
-            # ForwardsZ,
-            # BackwardsZ,
-            # TShape,
+            ForwardsL,
+            BackwardsL,
+            ForwardsZ,
+            BackwardsZ,
+            TShape,
         ]
         _ShapeClass = random.choice(shapes)
         shape = _ShapeClass()
