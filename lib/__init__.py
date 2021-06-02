@@ -58,12 +58,15 @@ class TetrisGame(charpy.Game):
         # line edge case
         # todo refactor this to move line position for every rotation
         if self.shape.__str__() == 'Line':
-            if self.shape.position.x > self.grid.position.x + self.grid.size.x - 3:
+            # if vertical
+            if self.shape.matrix.size.y > self.shape.matrix.size.x:
                 self.shape.move('left', self.grid)
+                self.shape.move('down', self.grid)
+            else:
+                self.shape.move('right', self.grid)
+                self.shape.move('up', self.grid)
             if self.shape.position.x > self.grid.position.x + self.grid.size.x - 4:
                 self.shape.move('left', self.grid)
-            if self.shape.position.y > self.grid.position.y + self.grid.size.y - 3:
-                self.shape.move('up', self.grid)
             if self.shape.position.y > self.grid.position.y + self.grid.size.y - 4:
                 self.shape.move('up', self.grid)
 
@@ -119,7 +122,7 @@ class TetrisGame(charpy.Game):
             pass
 
         # getting size and position explicity for updated values after spin
-        if key_character == 'w':
+        if key_character == 'w' or key == keyboard.Key.up:
             self.spin_shape()
             return
 
@@ -128,7 +131,7 @@ class TetrisGame(charpy.Game):
         ssize = self.shape.size
         gsize = self.grid.size
 
-        if key_character == 'a':
+        if key_character == 'a' or key == keyboard.Key.left:
             if spos.x > gpos.x + 1: 
                 self.shape.move('left', self.grid)
 
@@ -136,7 +139,7 @@ class TetrisGame(charpy.Game):
                 self.shape.move('right', self.grid)
             return
 
-        if key_character == 'd':
+        if key_character == 'd' or key == keyboard.Key.right:
             if spos.x < gpos.x + gsize.x - ssize.x - 1 :
                 self.shape.move('right', self.grid)
 
@@ -144,7 +147,7 @@ class TetrisGame(charpy.Game):
                 self.shape.move('left', self.grid)
             return
 
-        if key_character == 's':
+        if key_character == 's' or key == keyboard.Key.down:
             if spos.y < gpos.y + gsize.y - ssize.y - 1 :
                 self.shape.move('down', self.grid)
                 
