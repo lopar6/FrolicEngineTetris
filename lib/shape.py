@@ -1,4 +1,4 @@
-import numpy
+import colorama
 
 from charpy.screen import Screen
 from charpy.vector2 import Vector2
@@ -7,13 +7,23 @@ from charpy.matrix import Matrix
 
 from lib.grid import Grid
 
+BRIGHT = colorama.Style.BRIGHT
+RESET_ALL = colorama.Style.RESET_ALL
 class Shape(GameObject):
-    char = '▣'
-    has_collided = False
+
+    def __init__(self, matrix: Matrix):
+        super().__init__(matrix=matrix)
+        self.base_char = self.base_char if hasattr(self, 'base_char') else '▣'
+        self.has_collided = False
+        self.color = self.color if hasattr(self, 'color') else colorama.Fore.WHITE
+
+    @property
+    def char(self):
+        return f'{self.color}{BRIGHT}{self.base_char}{RESET_ALL}'
+
 
     def __str__(self):
         return 'Shape'
-
 
     def draw(self, screen: Screen):
     # Note: Shape positions are NOT relative to the grid position
@@ -47,18 +57,22 @@ class Shape(GameObject):
 
 
 class Square(Shape):
+
+
     def __init__(self):
         matrix = Matrix([
             [1, 1],
             [1, 1],
         ])
+        self.color = colorama.Fore.YELLOW
         super().__init__(matrix=matrix)
+
 
     def __str__(self):
         return 'Square'
 
 class Line(Shape):
-    char = '▤'
+
     def __init__(self):
         matrix = Matrix([
             [1],
@@ -66,6 +80,7 @@ class Line(Shape):
             [1],
             [1],
         ])
+        self.color = colorama.Fore.CYAN
         super().__init__(matrix=matrix)
 
     def __str__(self):
@@ -73,13 +88,14 @@ class Line(Shape):
 
 
 class ForwardsL(Shape):
-    char = '▢'
+
     def __init__(self):
         matrix = Matrix([
             [1, 0],
             [1, 0],
             [1, 1],
         ])
+        self.color = colorama.Fore.YELLOW
         super().__init__(matrix=matrix)
 
     def __str__(self):
@@ -87,13 +103,14 @@ class ForwardsL(Shape):
 
 
 class BackwardsL(Shape):
-    char = '□'
+
     def __init__(self):
         matrix = Matrix([
             [0, 1],
             [0, 1],
             [1, 1],
         ])
+        self.color = colorama.Fore.BLUE
         super().__init__(matrix=matrix)
 
     def __str__(self):
@@ -101,12 +118,13 @@ class BackwardsL(Shape):
 
 
 class ForwardsZ(Shape):
-    char = '▧'
+    
     def __init__(self):
         matrix = Matrix([
             [1, 1, 0],
             [0, 1, 1],
         ])
+        self.color = colorama.Fore.RED
         super().__init__(matrix=matrix)
 
     def __str__(self):
@@ -114,12 +132,13 @@ class ForwardsZ(Shape):
 
 
 class BackwardsZ(Shape):
-    char = '▨'
+    
     def __init__(self):
         matrix = Matrix([
             [0, 1, 1],
             [1, 1, 0],
         ])
+        self.color = colorama.Fore.GREEN
         super().__init__(matrix=matrix)
 
     def __str__(self):
@@ -127,15 +146,14 @@ class BackwardsZ(Shape):
 
 
 class TShape(Shape):
-    char = '▦'
+
     def __init__(self):
         matrix = Matrix([
             [0, 1, 0],
             [1, 1, 1],
         ])
+        self.color = colorama.Fore.MAGENTA
         super().__init__(matrix=matrix)
 
     def __str__(self):
         return 'TShape'
-
-# todo add spin collision check

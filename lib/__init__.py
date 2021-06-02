@@ -1,8 +1,5 @@
 import datetime
 import random
-from typing import Tuple
-from charpy import screen
-import numpy
 from time import sleep
 import copy
 
@@ -25,23 +22,24 @@ class TetrisGame(charpy.Game):
         self.start_shape_position : Vector2 = None
         self.deltatime : datetime.timedelta = None
         self.start_shape_position: Vector2 = self.grid.position.clone()
-        self.start_shape_position.x += int(self.grid.size.x/2) - 2
+        self.start_shape_position.x += int(self.grid.size.x/2) - 1
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
         self.shape : Shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
         self.set_on_keydown(self.on_key_down)
-        self.game_loop()
+        self.show_debug_info = True
+        self.run()
 
     def get_next_shape(self) -> Shape:
         shapes = [
-            # Square,
+            Square,
             Line,
-            # ForwardsL,
-            # BackwardsL,
-            # ForwardsZ,
-            # BackwardsZ,
-            # TShape,
+            ForwardsL,
+            BackwardsL,
+            ForwardsZ,
+            BackwardsZ,
+            TShape,
         ]
         _ShapeClass = random.choice(shapes)
         shape = _ShapeClass()
@@ -49,31 +47,64 @@ class TetrisGame(charpy.Game):
         return shape
 
 
+    # handles collision logic for shape rotations
     def spin_shape(self):
-        prevous_shape = copy.copy(self.shape)
+        _prevous_shape = copy.copy(self.shape)
+        _prevous_position = _prevous_shape.position.clone()
         # line edge case
         if self.shape.__str__() == 'Line':
-            if self.shape.position.x > self.grid.position.x + self.grid.size.x - 3:
+            # if vertical
+            if self.shape.matrix.size.y > self.shape.matrix.size.x:
                 self.shape.move('left', self.grid)
+                self.shape.move('down', self.grid)
+            else:
+                self.shape.move('right', self.grid)
+                self.shape.move('up', self.grid)
             if self.shape.position.x > self.grid.position.x + self.grid.size.x - 4:
                 self.shape.move('left', self.grid)
+            if self.shape.position.y > self.grid.position.y + self.grid.size.y - 4:
+                self.shape.move('up', self.grid)
 
         self.shape.matrix = self.shape.matrix.rotated(clockwize=True)
+
+        # check if shape is within grid and correct
         if self.shape.position.x < self.grid.position.x + 1: 
             self.shape.move('right', self.grid)
         elif self.shape.position.x > self.grid.position.x + self.grid.size.x - self.shape.size.x - 1 :
             self.shape.move('left', self.grid)
-
-            # todo fix you can can spin into ground
         elif self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
             self.shape.move('up', self.grid)
-        
-        # Todo add collision detection for spin
 
-        if self.laid_shapes.check_for_collision(self.shape):
-            pass
-    
-    
+        # check for collion with laid_shapes
+        _was_collision, _collision_location_y, _collision_location_x = self.laid_shapes.check_for_collision(self.shape, True)
+        if _was_collision:
+            # if collision was on the right side
+            if _collision_location_x > 0:
+                self.shape.move('left', self.grid)
+                _reverse_moved_direction = 'left'
+            else: 
+                self.shape.move('right', self.grid)
+                _reverse_moved_direction = 'right'
+
+            # check if collision fixed
+            _was_collision, _collision_location_y, _collision_location_x = self.laid_shapes.check_for_collision(self.shape, True)
+            if _was_collision:
+                self.shape.move(_reverse_moved_direction, self.grid)
+                # if collsion was on bottom side
+                if _collision_location_y > 0:
+                    self.shape.move('up', self.grid)
+                else:
+                    self.shape.move('down', self.grid)
+
+        # occasionally shapes will still not be in bounds
+        if self.laid_shapes.check_for_collision(self.shape) or \
+        self.shape.position.x < self.grid.position.x + 1 or \
+        self.shape.position.x > self.grid.position.x + self.grid.size.x - self.shape.size.x - 1 or \
+        self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
+            self.shape = _prevous_shape
+            self.shape.position = _prevous_position
+
+
     def on_key_down(self, key):
         if key == keyboard.Key.esc:
             self.end_game()
@@ -86,7 +117,7 @@ class TetrisGame(charpy.Game):
             pass
 
         # getting size and position explicity for updated values after spin
-        if key_character == 'w':
+        if key_character == 'w' or key == keyboard.Key.up:
             self.spin_shape()
             return
 
@@ -95,7 +126,7 @@ class TetrisGame(charpy.Game):
         ssize = self.shape.size
         gsize = self.grid.size
 
-        if key_character == 'a':
+        if key_character == 'a' or key == keyboard.Key.left:
             if spos.x > gpos.x + 1: 
                 self.shape.move('left', self.grid)
 
@@ -103,7 +134,7 @@ class TetrisGame(charpy.Game):
                 self.shape.move('right', self.grid)
             return
 
-        if key_character == 'd':
+        if key_character == 'd' or key == keyboard.Key.right:
             if spos.x < gpos.x + gsize.x - ssize.x - 1 :
                 self.shape.move('right', self.grid)
 
@@ -111,7 +142,7 @@ class TetrisGame(charpy.Game):
                 self.shape.move('left', self.grid)
             return
 
-        if key_character == 's':
+        if key_character == 's' or key == keyboard.Key.down:
             if spos.y < gpos.y + gsize.y - ssize.y - 1 :
                 self.shape.move('down', self.grid)
                 
@@ -137,9 +168,9 @@ class TetrisGame(charpy.Game):
 
     def update(self, deltatime):
         self.deltatime = deltatime
-        self.time_since_shape_lowered += deltatime.microseconds
-        self.time_played += deltatime.microseconds
-        lower_rate = 750000
+        self.time_since_shape_lowered += deltatime
+        self.time_played += deltatime
+        lower_rate = .75
         if self.time_since_shape_lowered > lower_rate:
             self.time_since_shape_lowered = 0
             self.lower_shape()
@@ -182,9 +213,6 @@ class TetrisGame(charpy.Game):
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
         info = []
-        if self.deltatime.microseconds:
-            fps = str(int(1000000 / self.deltatime.microseconds))
-            info.append(f'FPS:            {fps}                    ')
         for i in range(0, len(info)):
             self.screen.set(y=i+1, x=left_offset, value=info[i])
     
