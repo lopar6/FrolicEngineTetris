@@ -57,6 +57,3 @@ class NextShapeBox(GameObject):
         _ShapeClass = random.choice(shapes)
         _shape : Shape = _ShapeClass()
         return _shape
-
-    def set_next_shape_position(self):
-        self.shape.position = self.get_start_shape_position()
