@@ -1,13 +1,10 @@
-import numpy
-import copy
-import colorama
-
 from charpy.vector2 import Vector2
 from charpy.game_object import GameObject
 from charpy.screen import Screen
 from charpy.matrix import Matrix
 
-from lib import Shape, Grid
+from lib import Grid
+from lib.shape import *
 
 
 class LaidShapes(GameObject):

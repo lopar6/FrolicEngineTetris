@@ -10,6 +10,7 @@ from pynput import keyboard
 from lib.grid import Grid
 from lib.shape import *
 from lib.laid_shapes import LaidShapes
+from lib.next_shape_box import NextShapeBox
 
 class TetrisGame(charpy.Game):
 
@@ -19,13 +20,15 @@ class TetrisGame(charpy.Game):
         super().__init__()
         self.grid = Grid(_grid_height, _grid_rows)
         self.grid.position.x += 2
-        self.start_shape_position : Vector2 = None
+        self.start_shape_position : Vector2 = None #todo remove this?
         self.deltatime : datetime.timedelta = None
         self.start_shape_position: Vector2 = self.grid.position.clone()
         self.start_shape_position.x += int(self.grid.size.x/2) - 1
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
-        self.shape : Shape = self.get_next_shape()
+        self.next_shape_box = NextShapeBox(self.grid)
+        self.shape : Shape = self.next_shape_box.get_next_shape()
+        self.shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
         self.score = 0
         self.time_bewtween_shape_lowerings = 0
@@ -40,18 +43,9 @@ class TetrisGame(charpy.Game):
         _high_score_file.close()
         self.run()
 
+
     def get_next_shape(self) -> Shape:
-        shapes = [
-            # Square,
-            Line,
-            # ForwardsL,
-            # BackwardsL,
-            # ForwardsZ,
-            # BackwardsZ,
-            # TShape,
-        ]
-        _ShapeClass = random.choice(shapes)
-        shape = _ShapeClass()
+        shape = self.next_shape_box.get_next_shape()
         shape.position = self.start_shape_position.clone()
         return shape
 
@@ -203,6 +197,8 @@ class TetrisGame(charpy.Game):
             self.laid_shapes.draw_laid_shapes(self.grid, self.screen)
         if self.shape:
             self.shape.draw(self.screen)
+        if self.next_shape_box:
+            self.next_shape_box.draw(self.screen)
         self.draw_info()
         super().draw()
 
@@ -226,11 +222,15 @@ class TetrisGame(charpy.Game):
     #  add score and next piece
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
+        top_offset = self.next_shape_box.position.y + self.next_shape_box.size.y
         info = []
-        info.append(f'High score: {self.high_score}')
-        info.append(f'Score:      {self.score}')
+        info.append(f'Score:')
+        info.append(f'{self.score}')
+        info.append('\n')
+        info.append(f'High score:')
+        info.append(f'{self.high_score}')
         for i in range(0, len(info)):
-            self.screen.set(y=i+1, x=left_offset, value=info[i])
+            self.screen.set(y=top_offset + i, x=left_offset, value=info[i])
     
 
     def game_over(self):
