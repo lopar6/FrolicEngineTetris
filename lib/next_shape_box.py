@@ -26,10 +26,6 @@ class NextShapeBox(GameObject):
     def set_start_shape_position(self):
         _left_offset = 2
         _top_offset = 1
-        # if self.current_shape.__str__() == "Square":
-        #     _left_offset += 0
-        #     _top_offset  += 1
-
         self.current_shape.position = Vector2(x=(self.position.x + _left_offset), y=(self.position.y + _top_offset)) 
 
 
