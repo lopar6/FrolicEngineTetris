@@ -43,9 +43,6 @@ class Shape(GameObject):
 
     def move(self, direction: str, grid: Grid):
             spos = self.position
-            gpos = grid.position
-            sheight = self.size.y
-            gheight = grid.size.y
             if direction == 'left':
                 spos.x -= 1
             if direction == 'right':
@@ -75,10 +72,7 @@ class Line(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [1],
-            [1],
-            [1],
-            [1],
+            [1, 1, 1, 1]
         ])
         self.color = colorama.Fore.CYAN
         super().__init__(matrix=matrix)
@@ -91,9 +85,8 @@ class ForwardsL(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [1, 0],
-            [1, 0],
-            [1, 1],
+            [0, 0, 1],
+            [1, 1, 1],
         ])
         self.color = colorama.Fore.YELLOW
         super().__init__(matrix=matrix)
@@ -106,9 +99,8 @@ class BackwardsL(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [0, 1],
-            [0, 1],
-            [1, 1],
+            [1, 0, 0],
+            [1, 1, 1],
         ])
         self.color = colorama.Fore.BLUE
         super().__init__(matrix=matrix)
@@ -157,3 +149,4 @@ class TShape(Shape):
 
     def __str__(self):
         return 'TShape'
+        

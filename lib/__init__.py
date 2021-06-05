@@ -10,6 +10,7 @@ from pynput import keyboard
 from lib.grid import Grid
 from lib.shape import *
 from lib.laid_shapes import LaidShapes
+from lib.next_shape_box import NextShapeBox
 
 class TetrisGame(charpy.Game):
 
@@ -19,30 +20,32 @@ class TetrisGame(charpy.Game):
         super().__init__()
         self.grid = Grid(_grid_height, _grid_rows)
         self.grid.position.x += 2
-        self.start_shape_position : Vector2 = None
+        self.start_shape_position : Vector2 = None #todo remove this?
         self.deltatime : datetime.timedelta = None
         self.start_shape_position: Vector2 = self.grid.position.clone()
         self.start_shape_position.x += int(self.grid.size.x/2) - 1
         self.start_shape_position.y += 1
         self.time_since_shape_lowered = self.time_played = 1
-        self.shape : Shape = self.get_next_shape()
+        self.next_shape_box = NextShapeBox(self.grid)
+        self.shape : Shape = self.next_shape_box.get_next_shape()
+        self.shape = self.get_next_shape()
         self.laid_shapes = LaidShapes(self.grid, _grid_height, _grid_rows)
+        self.score = 0
+        self.time_bewtween_shape_lowerings = 0
         self.set_on_keydown(self.on_key_down)
         self.show_debug_info = True
+        try:
+            _high_score_file = open("high_score.txt", "r")
+            self.high_score = int(_high_score_file.read())
+        except:
+            _high_score_file = open("high_score.txt", "w")
+            self.high_score = 0
+        _high_score_file.close()
         self.run()
 
+
     def get_next_shape(self) -> Shape:
-        shapes = [
-            Square,
-            Line,
-            ForwardsL,
-            BackwardsL,
-            ForwardsZ,
-            BackwardsZ,
-            TShape,
-        ]
-        _ShapeClass = random.choice(shapes)
-        shape = _ShapeClass()
+        shape = self.next_shape_box.get_next_shape()
         shape.position = self.start_shape_position.clone()
         return shape
 
@@ -103,6 +106,10 @@ class TetrisGame(charpy.Game):
         self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
             self.shape = _prevous_shape
             self.shape.position = _prevous_position
+
+
+    def calculate_score(self, num_lines_cleared: int):
+        self.score += (num_lines_cleared * 100) * num_lines_cleared
 
 
     def on_key_down(self, key):
@@ -170,17 +177,18 @@ class TetrisGame(charpy.Game):
         self.deltatime = deltatime
         self.time_since_shape_lowered += deltatime
         self.time_played += deltatime
-        lower_rate = .75
-        if self.time_since_shape_lowered > lower_rate:
+        # as real time increases, the game speeds up 
+        self.time_bewtween_shape_lowerings = ((1 / (self.time_played + 150)) * 100)
+        if self.time_since_shape_lowered > self.time_bewtween_shape_lowerings:
             self.time_since_shape_lowered = 0
             self.lower_shape()
             if self.shape.has_collided:
                 self.laid_shapes.add_shape(self.shape, self.grid)
                 if self.laid_shapes.check_for_height_limit_reached():
                     self.game_over()
+                _num_cleared_lines = self.laid_shapes.clear_lines()
+                self.calculate_score(_num_cleared_lines)
                 self.shape = self.get_next_shape()
-                self.laid_shapes.clear_lines()
-
 
     def draw(self):
         if self.grid:
@@ -189,6 +197,8 @@ class TetrisGame(charpy.Game):
             self.laid_shapes.draw_laid_shapes(self.grid, self.screen)
         if self.shape:
             self.shape.draw(self.screen)
+        if self.next_shape_box:
+            self.next_shape_box.draw(self.screen)
         self.draw_info()
         super().draw()
 
@@ -212,13 +222,25 @@ class TetrisGame(charpy.Game):
     #  add score and next piece
     def draw_info(self):
         left_offset = self.grid.position.x + self.grid.size.x + 2
+        top_offset = self.next_shape_box.position.y + self.next_shape_box.size.y
         info = []
+        info.append(f'Score:')
+        info.append(f'{self.score}')
+        info.append('\n')
+        info.append(f'High score:')
+        info.append(f'{self.high_score}')
         for i in range(0, len(info)):
-            self.screen.set(y=i+1, x=left_offset, value=info[i])
+            self.screen.set(y=top_offset + i, x=left_offset, value=info[i])
     
 
     def game_over(self):
         self.clear_set_empty_screen()
+    
+        if self.score > self.high_score:
+            _high_score_file = open("high_score.txt", "w")
+            _high_score_file.write(str(self.score))
+            _high_score_file.close()
+        print("You got the high score!!")
         print("Thanks for playing!")
         sleep(5)
         self.end_game()

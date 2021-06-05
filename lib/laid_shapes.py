@@ -1,13 +1,10 @@
-import numpy
-import copy
-import colorama
-
 from charpy.vector2 import Vector2
 from charpy.game_object import GameObject
 from charpy.screen import Screen
 from charpy.matrix import Matrix
 
-from lib import Shape, Grid
+from lib import Grid
+from lib.shape import *
 
 
 class LaidShapes(GameObject):
@@ -70,25 +67,26 @@ class LaidShapes(GameObject):
     # it may be nice to add some sort of animation here
     def clear_lines(self) -> int:
         # find and clear lines
-        cleared_lines = []
+        _cleared_lines = []
         for i in range(1, len(self.matrix)):
-            if not 0 in self.matrix[i][1:-2]:
-                cleared_lines.append(i)
+            if not 0 in self.matrix[i][1:-1]:
+                _cleared_lines.append(i)
                 self.matrix[i] = [0 for i in self.matrix[i]]
 
         # lower uncleared lines
-        cleared_below = 0
-        if len(cleared_lines) > 0:
+        _cleared_below = 0
+        _total_lines_cleared = len(_cleared_lines)
+        if len(_cleared_lines) > 0:
             for i in range(len(self.matrix) - 1, 1, -1):
-                for cleared_line in cleared_lines:
+                for cleared_line in _cleared_lines:
                     if cleared_line > i:
-                        cleared_below += 1
-                        cleared_lines.pop(0)
-                if cleared_below:
-                    self.matrix[i + cleared_below] = self.matrix[i].copy()
+                        _cleared_below += 1
+                        _cleared_lines.pop(0)
+                if _cleared_below:
+                    self.matrix[i + _cleared_below] = self.matrix[i].copy()
                     self.matrix[i] = [0 for val in self.matrix[i]]
 
-        return len(cleared_lines)
+        return _total_lines_cleared
 
     def check_for_height_limit_reached(self):
         if self.highest_piece < 2:
