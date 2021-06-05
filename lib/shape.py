@@ -75,10 +75,7 @@ class Line(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [1],
-            [1],
-            [1],
-            [1],
+            [1, 1, 1, 1]
         ])
         self.color = colorama.Fore.CYAN
         super().__init__(matrix=matrix)
@@ -91,9 +88,8 @@ class ForwardsL(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [1, 0],
-            [1, 0],
-            [1, 1],
+            [0, 0, 1],
+            [1, 1, 1],
         ])
         self.color = colorama.Fore.YELLOW
         super().__init__(matrix=matrix)
@@ -106,9 +102,8 @@ class BackwardsL(Shape):
 
     def __init__(self):
         matrix = Matrix([
-            [0, 1],
-            [0, 1],
-            [1, 1],
+            [1, 1, 1],
+            [0, 0, 1],
         ])
         self.color = colorama.Fore.BLUE
         super().__init__(matrix=matrix)
