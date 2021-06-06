@@ -1,5 +1,4 @@
 import datetime
-import random
 from time import sleep
 import copy
 
@@ -20,7 +19,6 @@ class TetrisGame(charpy.Game):
         super().__init__()
         self.grid = Grid(_grid_height, _grid_rows)
         self.grid.position.x += 2
-        self.start_shape_position : Vector2 = None #todo remove this?
         self.deltatime : datetime.timedelta = None
         self.start_shape_position: Vector2 = self.grid.position.clone()
         self.start_shape_position.x += int(self.grid.size.x/2) - 1
@@ -33,7 +31,19 @@ class TetrisGame(charpy.Game):
         self.score = 0
         self.time_bewtween_shape_lowerings = 0
         self.set_on_keydown(self.on_key_down)
+        self.set_on_keyup(self.on_key_up)
         self.show_debug_info = True
+        self.button_repeat_interval = .2
+        self.up_pressed = False
+        # initalized to button repeat interval so button presses execute as they are pressed
+        self.time_since_up_pressed = self.button_repeat_interval
+        self.down_pressed = False
+        self.time_since_down_pressed = self.button_repeat_interval
+        self.left_pressed = False
+        self.time_since_left_pressed = self.button_repeat_interval
+        self.right_pressed = False
+        self.time_since_right_pressed = self.button_repeat_interval
+
         try:
             _high_score_file = open("high_score.txt", "r")
             self.high_score = int(_high_score_file.read())
@@ -123,60 +133,108 @@ class TetrisGame(charpy.Game):
         except:
             pass
 
-        # getting size and position explicity for updated values after spin
-        if key_character == 'w' or key == keyboard.Key.up:
-            self.spin_shape()
-            return
+        # when key is pressed it exicutes until it 
+        if key_character == 'w' or key == keyboard.Key.up or self.up_pressed:
+            self.up_pressed = True
 
+        if key_character == 'a' or key == keyboard.Key.left:
+            self.left_pressed = True
+
+        if key_character == 'd' or key == keyboard.Key.right:
+            self.right_pressed = True 
+
+        if key_character == 's' or key == keyboard.Key.down:
+            self.down_pressed = True
+
+
+    def on_key_up(self, key):
+        key_character = None
+        try:
+            key_character = key.char
+        except:
+            pass
+
+        if key_character == 'w' or key == keyboard.Key.up:
+            self.up_pressed = False
+            self.time_since_up_pressed = self.button_repeat_interval
+
+        if key_character == 'a' or key == keyboard.Key.left:
+            self.left_pressed = False
+            self.time_since_left_pressed = self.button_repeat_interval
+
+        if key_character == 'd' or key == keyboard.Key.right:
+            self.right_pressed = False
+            self.time_bewtween_right_pressed = self.button_repeat_interval
+
+        if key_character == 's' or key == keyboard.Key.down:
+            self.down_pressed = False
+            self.time_since_down_pressed = self.button_repeat_interval
+
+    
+    def execute_button_presses(self):
+        if self.up_pressed:
+            self.time_since_up_pressed += self.deltatime
+            if self.time_since_up_pressed >= self.button_repeat_interval:
+                self.time_since_up_pressed = 0
+                self.spin_shape()
+
+        # getting size and position explicity for updated values after spin
         spos = self.shape.position
         gpos = self.grid.position
         ssize = self.shape.size
         gsize = self.grid.size
 
-        if key_character == 'a' or key == keyboard.Key.left:
-            if spos.x > gpos.x + 1: 
-                self.shape.move('left', self.grid)
+        if self.left_pressed:
+            self.time_since_left_pressed += self.deltatime
+            if self.time_since_left_pressed >= self.button_repeat_interval:
+                self.time_since_left_pressed = 0
+                if spos.x > gpos.x + 1: 
+                    self.shape.move('left', self.grid)
+                    if self.laid_shapes.check_for_collision(self.shape):
+                        self.shape.move('right', self.grid)            
 
-            if self.laid_shapes.check_for_collision(self.shape):
-                self.shape.move('right', self.grid)
-            return
-
-        if key_character == 'd' or key == keyboard.Key.right:
-            if spos.x < gpos.x + gsize.x - ssize.x - 1 :
-                self.shape.move('right', self.grid)
-
-            if self.laid_shapes.check_for_collision(self.shape):
-                self.shape.move('left', self.grid)
-            return
-
-        if key_character == 's' or key == keyboard.Key.down:
-            if spos.y < gpos.y + gsize.y - ssize.y - 1 :
-                self.shape.move('down', self.grid)
-                
-            if self.laid_shapes.check_for_collision(self.shape):
-                self.shape.has_collided = True
-                self.shape.move('up', self.grid)
-            return
-
+        if self.right_pressed:
+            self.time_since_right_pressed += self.deltatime
+            if self.time_since_right_pressed >= self.button_repeat_interval:
+                self.time_since_right_pressed = 0
+                if spos.x < gpos.x + gsize.x - ssize.x - 1 :
+                    self.shape.move('right', self.grid)
+                    if self.laid_shapes.check_for_collision(self.shape):
+                        self.shape.move('left', self.grid)
+            
+        if self.down_pressed:
+            self.time_since_down_pressed += self.deltatime
+            if self.time_since_down_pressed >= self.button_repeat_interval:
+                self.time_since_down_pressed = 0
+                if spos.y < gpos.y + gsize.y - ssize.y - 1 :
+                    self.shape.move('down', self.grid)
+                if self.laid_shapes.check_for_collision(self.shape):
+                    self.shape.has_collided = True
+                    self.shape.move('up', self.grid)
+            
 
     def lower_shape(self):
-        spos = self.shape.position
-        gpos = self.grid.position
-        sheight = self.shape.size.y
-        gheight = self.grid.size.y
-        if spos.y < gpos.y + gheight - sheight - 1 :
-            self.shape.move('down', self.grid)
-            if self.laid_shapes.check_for_collision(self.shape):
-                self.shape.move('up', self.grid)
+        # do not lower shape while player is manually lowering shape
+        if not self.down_pressed:
+            spos = self.shape.position
+            gpos = self.grid.position
+            sheight = self.shape.size.y
+            gheight = self.grid.size.y
+            if spos.y < gpos.y + gheight - sheight - 1 :
+                self.shape.move('down', self.grid)
+                if self.laid_shapes.check_for_collision(self.shape):
+                    self.shape.move('up', self.grid)
+                    self.shape.has_collided = True
+            else:
                 self.shape.has_collided = True
-        else:
-            self.shape.has_collided = True
 
 
     def update(self, deltatime):
         self.deltatime = deltatime
         self.time_since_shape_lowered += deltatime
         self.time_played += deltatime
+        # time bettween action repeating
+        self.execute_button_presses()
         # as real time increases, the game speeds up 
         self.time_bewtween_shape_lowerings = ((1 / (self.time_played + 150)) * 100)
         if self.time_since_shape_lowered > self.time_bewtween_shape_lowerings:
@@ -234,7 +292,7 @@ class TetrisGame(charpy.Game):
     
 
     def game_over(self):
-        self.clear_set_empty_screen()
+        self.clear_set_empty_screen() # no needed
     
         if self.score > self.high_score:
             _high_score_file = open("high_score.txt", "w")

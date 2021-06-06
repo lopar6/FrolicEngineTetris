@@ -2,7 +2,6 @@ import random
 import copy
 
 from charpy.vector2 import Vector2
-from charpy import screen
 from charpy.game_object import GameObject
 from charpy.screen import Screen
 from charpy.matrix import Matrix
