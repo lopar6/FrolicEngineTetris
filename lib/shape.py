@@ -1,3 +1,4 @@
+from charpy import matrix
 import colorama
 
 from charpy.screen import Screen
@@ -38,6 +39,7 @@ class Shape(GameObject):
                 if should_draw:
                     x = j + offset.x
                     y = i + offset.y
+                    # TODO fix this
                     screen.set(y=y, x=x, char=self.char)
 
 
@@ -150,3 +152,67 @@ class TShape(Shape):
     def __str__(self):
         return 'TShape'
         
+
+# non-traditional shapes from here
+class LetterT(Shape):
+    def __init__(self):
+        matrix = Matrix([
+            [1, 1, 1, 1, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+        ])
+        self.color = colorama.Fore.BLUE
+        super().__init__(matrix=matrix)
+
+
+class LetterE(Shape):
+    def __init__(self):
+        matrix = Matrix([
+            [1, 1, 1, 1],
+            [1, 0, 0, 0],
+            [1, 1, 1, 1],
+            [1, 0, 0, 0],
+            [1, 1, 1, 1],
+        ])
+        self.color = colorama.Fore.YELLOW
+        super().__init__(matrix=matrix)
+
+
+class LetterR(Shape):
+    def __init__(self):
+        matrix = Matrix([
+            [1, 1, 1, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1],
+            [1, 0, 1, 0],
+            [1, 0, 0, 1],
+        ])
+        self.color = colorama.Fore.MAGENTA
+        super().__init__(matrix=matrix)
+
+
+class LetterI(Shape):
+    def __init__(self):
+        matrix = Matrix([
+            [1],
+            [1],
+            [1],
+            [1],
+            [1],
+        ])
+        self.color = colorama.Fore.YELLOW
+        super().__init__(matrix=matrix)
+        
+class LetterS(Shape):
+    def __init__(self):
+        matrix = Matrix([
+            [1, 1, 1, 1],
+            [1, 0, 0, 0],
+            [1, 1, 1, 1],
+            [0, 0, 0, 1],
+            [1, 1, 1, 1],
+        ])
+        self.color = colorama.Fore.CYAN
+        super().__init__(matrix=matrix)

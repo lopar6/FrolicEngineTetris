@@ -17,9 +17,9 @@ class TetrisGame(charpy.Game):
         self.deltatime : datetime.timedelta = None
         self.set_on_keydown(self.on_key_down)
         self.set_on_keyup(self.on_key_up)
-        self.core_game = CoreGame()
+        self.core_game : CoreGame() = None
+        self.end_screen : EndScreen() = None
         self.start_screen = StartScreen()
-        self.end_screen= EndScreen()
         self.game_mode = self.start_screen
         self.run()
     
@@ -43,8 +43,12 @@ class TetrisGame(charpy.Game):
 
     
     def start_core_game(self):
+        self.core_game = CoreGame()
         self.game_mode = self.core_game
+        self.start_screen = None
 
 
     def end_core_game(self, score: int, got_high_score: bool):
+        self.end_screen = EndScreen()
         self.game_mode = self.end_screen
+        self.core_game = None

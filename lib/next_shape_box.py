@@ -12,7 +12,7 @@ from lib.shape import *
 
 class NextShapeBox(GameObject):
 
-    
+    # TODO use new Matrix.apply() 
     def __init__(self, grid: Grid):
         super().__init__()
         self.matrix : Matrix = Matrix.empty_sized(rows=4, columns=7)
