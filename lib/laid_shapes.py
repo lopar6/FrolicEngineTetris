@@ -49,7 +49,7 @@ class LaidShapes(GameObject):
                 if should_draw:
                     x = j + offset.x
                     y = i + offset.y
-                    screen.set(y=y, x=x, value=self.matrix[i][j])
+                    screen.set(y=y, x=x, char=self.matrix[i][j])
 
     def check_for_collision(self, shape: Shape, returnCollisionIndex = False) -> bool:
         for i in range(len(shape.matrix)):

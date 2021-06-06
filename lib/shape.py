@@ -38,7 +38,7 @@ class Shape(GameObject):
                 if should_draw:
                     x = j + offset.x
                     y = i + offset.y
-                    screen.set(y=y, x=x, value=self.char)
+                    screen.set(y=y, x=x, char=self.char)
 
 
     def move(self, direction: str, grid: Grid):
