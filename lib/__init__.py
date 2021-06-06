@@ -275,7 +275,7 @@ class TetrisGame(charpy.Game):
                 x = j + pos.x
                 y = i + pos.y
                 try:
-                    self.screen.set(y=y, x=x, value=char)
+                    self.screen.set(y=y, x=x, char=char)
                 except IndexError:
                     print("Your terminal window is too small\nPlease resize the window and restart the game")
                     self.end_game()
@@ -292,7 +292,7 @@ class TetrisGame(charpy.Game):
         info.append(f'High score:')
         info.append(f'{self.high_score}')
         for i in range(0, len(info)):
-            self.screen.set(y=top_offset + i, x=left_offset, value=info[i])
+            self.screen.set(y=top_offset + i, x=left_offset, char=info[i])
     
 
     def game_over(self):    
