@@ -2,6 +2,7 @@ from datetime import datetime
 
 from charpy import vector2
 from charpy.game_object import GameObject
+from pynput import keyboard
 
 from lib.shape import *
 
@@ -64,8 +65,9 @@ class StartScreen(GameObject):
 
 
     def on_key_down(self, key):
-        self.game_instance.start_core_game()
+        if key == keyboard.Key.space:
+            self.game_instance.start_core_game()
 
     
-    def on_key_up(self):
+    def on_key_up(self, key):
         pass

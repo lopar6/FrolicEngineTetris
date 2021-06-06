@@ -49,6 +49,6 @@ class TetrisGame(charpy.Game):
 
 
     def end_core_game(self, score: int, got_high_score: bool):
-        self.end_screen = EndScreen()
-        self.game_mode = self.end_screen
         self.core_game = None
+        self.end_screen = EndScreen(score, got_high_score)
+        self.game_mode = self.end_screen

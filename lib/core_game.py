@@ -296,5 +296,6 @@ class CoreGame(charpy.GameObject):
             _high_score_file = open("high_score.txt", "w")
             _high_score_file.write(str(self.score))
             _high_score_file.close()
-            self.game_instance.end_core_game(self.score, True)  
-        self.game_instance.end_core_game(self.score, True)  
+            self.game_instance.end_core_game(self.score, True)
+        else:
+            self.game_instance.end_core_game(self.score, False)  
