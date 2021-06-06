@@ -1,19 +1,16 @@
 import datetime
-from time import sleep
-import copy
 
 import charpy
-from charpy import screen
 from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
-from lib.grid import Grid
 from lib.shape import *
-from lib.laid_shapes import LaidShapes
-from lib.next_shape_box import NextShapeBox
 from lib.core_game import CoreGame
+from lib.start_screen import StartScreen
+from lib.end_screen import EndScreen
 
 class TetrisGame(charpy.Game):
+
 
     def __init__(self):
         super().__init__()
@@ -21,18 +18,33 @@ class TetrisGame(charpy.Game):
         self.set_on_keydown(self.on_key_down)
         self.set_on_keyup(self.on_key_up)
         self.core_game = CoreGame()
+        self.start_screen = StartScreen()
+        self.end_screen= EndScreen()
+        self.game_mode = self.start_screen
         self.run()
     
+
     def draw(self):
-        self.core_game.draw(self.screen)
+        self.game_mode.draw(self.screen)
         super().draw()
+
 
     def update(self, deltatime: datetime.timedelta):
         self.deltatime = deltatime
-        self.core_game.update(deltatime)
+        self.game_mode.update(deltatime)
+
 
     def on_key_down(self, key: keyboard.Key):
-        self.core_game.on_key_down(key)
+        self.game_mode.on_key_down(key)
+
 
     def on_key_up(self, key: keyboard.Key):
-        self.core_game.on_key_up(key)
+        self.game_mode.on_key_up(key)
+
+    
+    def start_core_game(self):
+        self.game_mode = self.core_game
+
+
+    def end_core_game(self, score: int, got_high_score: bool):
+        self.game_mode = self.end_screen

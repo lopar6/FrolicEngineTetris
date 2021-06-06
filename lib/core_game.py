@@ -3,7 +3,6 @@ from time import sleep
 import copy
 
 import charpy
-from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
 from lib.grid import Grid
@@ -261,7 +260,6 @@ class CoreGame(charpy.GameObject):
         if self.next_shape_box:
             self.next_shape_box.draw(screen)
         self.draw_info(screen)
-        #! super().draw() ! do i need this 
 
 
     def draw_grid(self, screen: Screen):
@@ -291,14 +289,12 @@ class CoreGame(charpy.GameObject):
         info.append(f'High score:')
         info.append(f'{self.high_score}')
         for i in range(0, len(info)):
-            screen.set(y=top_offset + i, x=left_offset, char=info[i])
+            screen.draw_string(info[i], Vector2(x=left_offset, y=top_offset + i))
 
-    def game_over(self):    
+    def game_over(self):  
         if self.score > self.high_score:
             _high_score_file = open("high_score.txt", "w")
             _high_score_file.write(str(self.score))
             _high_score_file.close()
-        print("You got the high score!!")
-        print("Thanks for playing!")
-        sleep(5)
-        self.end_game()
+            self.game_instance.end_core_game(self.score, True)  
+        self.game_instance.end_core_game(self.score, True)  
