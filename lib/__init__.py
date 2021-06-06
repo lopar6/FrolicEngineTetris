@@ -133,7 +133,7 @@ class TetrisGame(charpy.Game):
         except:
             pass
 
-        # when key is pressed it exicutes until it 
+        # when key is pressed it executes until key is lifted
         if key_character == 'w' or key == keyboard.Key.up or self.up_pressed:
             self.up_pressed = True
 
@@ -172,6 +172,7 @@ class TetrisGame(charpy.Game):
 
     
     def execute_button_presses(self):
+        # if key is pressed, and the right amount of time has been waited, execute 
         if self.up_pressed:
             self.time_since_up_pressed += self.deltatime
             if self.time_since_up_pressed >= self.button_repeat_interval:
