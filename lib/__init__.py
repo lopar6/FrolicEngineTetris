@@ -110,10 +110,14 @@ class TetrisGame(charpy.Game):
                     self.shape.move('down', self.grid)
 
         # occasionally shapes will still not be in bounds
+        ssize = self.shape.size
+        gsize = self.grid.size
+        spos = self.shape.position
+        gpos = self.grid.position
         if self.laid_shapes.check_for_collision(self.shape) or \
-        self.shape.position.x < self.grid.position.x + 1 or \
-        self.shape.position.x > self.grid.position.x + self.grid.size.x - self.shape.size.x - 1 or \
-        self.shape.position.y > self.grid.position.y + self.grid.size.y - self.shape.size.y - 1 :
+        spos.x < gpos.x + 1 or \
+        spos.x > gpos.x + gsize.size.x - ssize.x - 1 or \
+        spos.y > gpos.y + gsize.size.y - ssize.y - 1 :
             self.shape = _prevous_shape
             self.shape.position = _prevous_position
 
@@ -165,7 +169,7 @@ class TetrisGame(charpy.Game):
 
         if key_character == 'd' or key == keyboard.Key.right:
             self.right_pressed = False
-            self.time_bewtween_right_pressed = self.button_repeat_interval
+            self.time_since_right_pressed = self.button_repeat_interval
 
         if key_character == 's' or key == keyboard.Key.down:
             self.down_pressed = False
