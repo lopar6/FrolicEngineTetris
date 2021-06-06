@@ -134,7 +134,7 @@ class TetrisGame(charpy.Game):
             pass
 
         # when key is pressed it executes until key is lifted
-        if key_character == 'w' or key == keyboard.Key.up or self.up_pressed:
+        if key_character == 'w' or key == keyboard.Key.up:
             self.up_pressed = True
 
         if key_character == 'a' or key == keyboard.Key.left:
@@ -146,6 +146,7 @@ class TetrisGame(charpy.Game):
         if key_character == 's' or key == keyboard.Key.down:
             self.down_pressed = True
 
+        self.execute_button_presses()
 
     def on_key_up(self, key):
         key_character = None
@@ -169,6 +170,8 @@ class TetrisGame(charpy.Game):
         if key_character == 's' or key == keyboard.Key.down:
             self.down_pressed = False
             self.time_since_down_pressed = self.button_repeat_interval
+        
+        self.execute_button_presses()
 
     
     def execute_button_presses(self):
@@ -292,9 +295,7 @@ class TetrisGame(charpy.Game):
             self.screen.set(y=top_offset + i, x=left_offset, value=info[i])
     
 
-    def game_over(self):
-        self.clear_set_empty_screen() # no needed
-    
+    def game_over(self):    
         if self.score > self.high_score:
             _high_score_file = open("high_score.txt", "w")
             _high_score_file.write(str(self.score))
