@@ -1,6 +1,6 @@
 import datetime
 
-import charpy
+import frolic
 from numpy.core.fromnumeric import shape
 from pynput import keyboard
 
@@ -9,7 +9,7 @@ from lib.core_game import CoreGame
 from lib.start_screen import StartScreen
 from lib.end_screen import EndScreen
 
-class TetrisGame(charpy.Game):
+class TetrisGame(frolic.Game):
 
 
     def __init__(self):

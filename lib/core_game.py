@@ -2,7 +2,7 @@ import datetime
 from time import sleep
 import copy
 
-import charpy
+import frolic
 from pynput import keyboard
 
 from lib.grid import Grid
@@ -10,7 +10,7 @@ from lib.shape import *
 from lib.laid_shapes import LaidShapes
 from lib.next_shape_box import NextShapeBox
        
-class CoreGame(charpy.GameObject): 
+class CoreGame(frolic.GameObject): 
     def __init__(self):
         _grid_height = 16    # used to initalize both grid and laid_shapes
         _grid_rows = 13

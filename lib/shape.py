@@ -1,10 +1,10 @@
-from charpy import matrix
+from frolic import matrix
 import colorama
 
-from charpy.screen import Screen
-from charpy.vector2 import Vector2
-from charpy.game_object import GameObject
-from charpy.matrix import Matrix
+from frolic.screen import Screen
+from frolic.vector2 import Vector2
+from frolic.game_object import GameObject
+from frolic.matrix import Matrix
 
 from lib.grid import Grid
 

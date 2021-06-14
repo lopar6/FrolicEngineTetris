@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from charpy import vector2
-from charpy.game_object import GameObject
+from frolic import vector2
+from frolic.game_object import GameObject
 from pynput import keyboard
 
 from lib.shape import *
