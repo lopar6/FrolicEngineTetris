@@ -1,7 +1,7 @@
-from charpy.matrix_border import MatrixBorder
-from charpy.vector2 import Vector2
-from charpy.game_object import GameObject
-from charpy.matrix import Matrix
+from frolic.matrix_border import MatrixBorder
+from frolic.vector2 import Vector2
+from frolic.game_object import GameObject
+from frolic.matrix import Matrix
 
 class Grid(GameObject):
     # The matrix will look something like this, but its size

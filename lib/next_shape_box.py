@@ -1,18 +1,18 @@
 import random
 import copy
 
-from charpy.vector2 import Vector2
-from charpy.game_object import GameObject
-from charpy.screen import Screen
-from charpy.matrix import Matrix
-from charpy.matrix_border import MatrixBorder
+from frolic.vector2 import Vector2
+from frolic.game_object import GameObject
+from frolic.screen import Screen
+from frolic.matrix import Matrix
+from frolic.matrix_border import MatrixBorder
 
 from lib.grid import Grid
 from lib.shape import *
 
 class NextShapeBox(GameObject):
 
-    
+    # TODO use new Matrix.apply() 
     def __init__(self, grid: Grid):
         super().__init__()
         self.matrix : Matrix = Matrix.empty_sized(rows=4, columns=7)

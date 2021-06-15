@@ -1,7 +1,7 @@
-from charpy.vector2 import Vector2
-from charpy.game_object import GameObject
-from charpy.screen import Screen
-from charpy.matrix import Matrix
+from frolic.vector2 import Vector2
+from frolic.game_object import GameObject
+from frolic.screen import Screen
+from frolic.matrix import Matrix
 
 from lib import Grid
 from lib.shape import *
