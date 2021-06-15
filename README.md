@@ -7,7 +7,7 @@ create a virtual environment and install FrolicEngine
 python3 -m venv venv
 pip install frolic-engine
 ```
-Go to to directory with __main__.py
+Go to to directory with `__main__.py`
 then to launch the game run
 
 ```
